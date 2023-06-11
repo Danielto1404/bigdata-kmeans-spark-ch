@@ -1,7 +1,8 @@
 import argparse
+
 from pyspark.sql import SparkSession
 
-from kmeans import PySparkKMeans, KmeansParams
+from kmeans import KmeansParams, PySparkKMeans
 from preprocessing import DataTransformer
 
 if __name__ == "__main__":
@@ -14,6 +15,7 @@ if __name__ == "__main__":
     parser.add_argument("--distance_measure", default="euclidean")
     parser.add_argument("--tol", default=1e-4)
     parser.add_argument("--seed", default=1)
+    parser.add_argument("--filter_null_threshold", default=0.5)
     parser.add_argument("--driver_cores", default=2),
     parser.add_argument("--driver_memory", default="4g"),
     parser.add_argument("--executor_memory", default="10g"),
@@ -27,9 +29,11 @@ if __name__ == "__main__":
         .config("spark.executor.memory", args.executor_memory) \
         .getOrCreate()
 
-    df = DataTransformer(df_path=args.data_path, columns_json_path=args.columns_json_path) \
-        .load(app) \
-        .transform()
+    df = DataTransformer(
+        df_path=args.data_path,
+        columns_json_path=args.columns_json_path,
+        filter_null_threshold=args.filter_null_threshold
+    ).load(app).transform()
 
     params = KmeansParams(
         k=args.k,

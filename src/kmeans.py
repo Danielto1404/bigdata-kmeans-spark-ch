@@ -1,6 +1,7 @@
+import dataclasses
+
 from pyspark.ml.clustering import KMeans
 from pyspark.sql import DataFrame
-import dataclasses
 
 
 @dataclasses.dataclass
