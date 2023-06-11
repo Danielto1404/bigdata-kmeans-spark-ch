@@ -24,3 +24,8 @@ python src/main.py \
     --driver_memory="4g" \
     --executor_memory="10g"
 ```
+
+### Project structure
+* [K-Means Spark](src/kmeans.py)
+* [Preprocessing](src/preprocessing.py)
+* [Main](src/main.py)
