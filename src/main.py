@@ -10,13 +10,13 @@ if __name__ == "__main__":
     parser.add_argument("--data_path", required=True)
     parser.add_argument("--save_path", required=True)
     parser.add_argument("--columns_json_path", default="../config/columns.json")
-    parser.add_argument("--k", default=2)
-    parser.add_argument("--max_iter", default=5)
+    parser.add_argument("--k", default=2, type=int)
+    parser.add_argument("--max_iter", default=5, type=int)
     parser.add_argument("--distance_measure", default="euclidean")
-    parser.add_argument("--tol", default=1e-4)
-    parser.add_argument("--seed", default=1)
-    parser.add_argument("--filter_null_threshold", default=0.5)
-    parser.add_argument("--driver_cores", default=2),
+    parser.add_argument("--tol", default=1e-4, type=float)
+    parser.add_argument("--seed", default=1, type=int)
+    parser.add_argument("--filter_null_threshold", default=0.5, type=float)
+    parser.add_argument("--driver_cores", default=2, type=int),
     parser.add_argument("--driver_memory", default="4g"),
     parser.add_argument("--executor_memory", default="10g"),
     args = parser.parse_args()
