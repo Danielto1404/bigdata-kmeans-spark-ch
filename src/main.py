@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("--executor_memory", default="10g"),
     args = parser.parse_args()
 
+    print("Initializing SparkSession...")
     app = SparkSession.builder \
         .appName("openfood-kmeans") \
         .master("local[*]") \
@@ -29,6 +30,7 @@ if __name__ == "__main__":
         .config("spark.executor.memory", args.executor_memory) \
         .getOrCreate()
 
+    print("Loading data...")
     df = DataTransformer(
         df_path=args.data_path,
         columns_json_path=args.columns_json_path,
@@ -43,5 +45,6 @@ if __name__ == "__main__":
         seed=args.seed
     )
 
+    print("Training model...")
     model = PySparkKMeans(params).fit(df)
     model.save(args.save_path)
