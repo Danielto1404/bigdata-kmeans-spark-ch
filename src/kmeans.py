@@ -1,19 +1,31 @@
 from pyspark.ml.clustering import KMeans
 from pyspark.sql import DataFrame
+import dataclasses
+
+
+@dataclasses.dataclass
+class KmeansParams:
+    k: int = 2
+    max_iter: int = 5
+    distance_measure: str = "euclidean"
+    tol: float = 1e-4
+    seed: int = 1
 
 
 class PySparkKMeans:
-    def __init__(self, model_params: dict):
-        self.model_params = model_params
+    def __init__(self, params: KmeansParams):
+        self.params = params
         self.model = None
 
     def fit(self, df: DataFrame) -> "PySparkKMeans":
         assert not self.is_fitted(), "Model is already trained."
 
         kmeans = KMeans() \
-            .setK(self.model_params.get("k", 2)) \
-            .setSeed(1) \
-            .setMaxIter(self.model_params.get("max_iter", 5))
+            .setK(self.params.k) \
+            .setMaxIter(self.params.max_iter) \
+            .setDistanceMeasure(self.params.distance_measure) \
+            .setTol(self.params.tol) \
+            .setSeed(self.params.seed)
 
         self.model = kmeans.fit(df)
         return self
@@ -29,4 +41,7 @@ class PySparkKMeans:
         self.model.save(path)
 
 
-__all__ = ["PySparkKMeans"]
+__all__ = [
+    "PySparkKMeans",
+    "KmeansParams"
+]
