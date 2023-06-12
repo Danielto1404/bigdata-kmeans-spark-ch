@@ -7,24 +7,20 @@ Open food facts dataset contains data about food products from all over the worl
 
 Link to csv file: https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv.gz
 
+
+### Clickhouse jar file
+Clickhouse jar file is available on https://github.com/ClickHouse/clickhouse-java/releases/download/v0.4.6/clickhouse-jdbc-0.4.6-all.jar and should be placed in `jars` directory.
+
+
 ### Example usage
 
 ```shell
-python src/main.py \
-    --data_path=<path_to_data> \
-    --save_path=<path_to_model> \
-    --columns_json_path=config/columns.json \
-    --k=2 \
-    --max_iter=10 \
-    --distance_measure="euclidian" \
-    --tol=1e-4 \
-    --seed=42 \
-    --driver_cores=2 \
-    --driver_memory="4g" \
-    --executor_memory="10g"
+docker-compose up
 ```
 
 ### Project structure
 * [K-Means Spark](src/kmeans.py)
 * [Preprocessing](src/preprocessing.py)
-* [Main](src/main.py)
+* [Clickhouse](src/clickhouse.py)
+* [Launching](src/main.py)
+* [Clickhouse and PySpark integration](docker-compose.yml)

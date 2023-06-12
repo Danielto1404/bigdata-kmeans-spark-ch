@@ -2,20 +2,23 @@ import json
 
 import pyspark.ml.feature as ml
 import pyspark.sql.functions as F
+from pyspark.sql import SparkSession
+
+import clickhouse
 
 
 class DataTransformer:
     def __init__(
             self,
-            df_path: str,
+            table_name: str,
             columns_json_path: str
     ):
-        self.data_path = df_path
+        self.table_name = table_name
         self.columns_json_path = columns_json_path
         self.df = None
 
-    def load(self, spark) -> "DataTransformer":
-        self.df = spark.read.option("sep", "\t").option("header", True).csv(self.data_path)
+    def load(self, spark: SparkSession) -> "DataTransformer":
+        self.df = clickhouse.read(spark, self.table_name)
         return self
 
     def transform(self):
