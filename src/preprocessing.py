@@ -1,7 +1,7 @@
 import json
 
-from pyspark.ml.feature import StandardScaler, VectorAssembler
-from pyspark.sql.functions import col, count, isnull, lit, when
+import pyspark.ml.feature as ml
+import pyspark.sql.functions as F
 
 
 class DataTransformer:
@@ -33,12 +33,12 @@ class DataTransformer:
 
     def _to_float(self) -> "DataTransformer":
         float_cols = self._read_columns()
-        columns = [col(x).cast("float") for x in float_cols]
+        columns = [F.col(x).cast("float") for x in float_cols]
         self.df = self.df.select(columns)
         return self
 
     def _fill_nans(self) -> "DataTransformer":
-        expressions = [(count(when(isnull(c), c)) / count("*")).alias(c) for c in self.df.columns]
+        expressions = [(F.count(F.when(F.isnull(c), c)) / F.count("*")).alias(c) for c in self.df.columns]
         nulls_stats = self.df.select(expressions).collect()[0].asDict()
 
         columns_to_save = [k for k, v in nulls_stats.items() if v < 1 - self.filter_null_threshold]
@@ -48,11 +48,11 @@ class DataTransformer:
         return self
 
     def _vectorize(self) -> "DataTransformer":
-        assembler = VectorAssembler(inputCols=self.df.columns, outputCol="vector_features").setHandleInvalid("error")
+        assembler = ml.VectorAssembler(inputCols=self.df.columns, outputCol="vector_features").setHandleInvalid("error")
         self.df = assembler.transform(self.df)
         return self
 
     def _standardize(self) -> "DataTransformer":
-        scaler = StandardScaler(inputCol="vector_features", outputCol="features", withStd=True, withMean=True)
+        scaler = ml.StandardScaler(inputCol="vector_features", outputCol="features", withStd=True, withMean=True)
         self.df = scaler.fit(self.df).transform(self.df)
         return self
