@@ -19,7 +19,6 @@ python src/main.py \
     --distance_measure="euclidian" \
     --tol=1e-4 \
     --seed=42 \
-    --filter_null_threshold=0.5 \
     --driver_cores=2 \
     --driver_memory="4g" \
     --executor_memory="10g"

@@ -15,7 +15,6 @@ if __name__ == "__main__":
     parser.add_argument("--distance_measure", default="euclidean")
     parser.add_argument("--tol", default=1e-4, type=float)
     parser.add_argument("--seed", default=1, type=int)
-    parser.add_argument("--filter_null_threshold", default=0.5, type=float)
     parser.add_argument("--driver_cores", default=2, type=int),
     parser.add_argument("--driver_memory", default="4g"),
     parser.add_argument("--executor_memory", default="10g"),
@@ -33,8 +32,7 @@ if __name__ == "__main__":
     print("Loading data...")
     df = DataTransformer(
         df_path=args.data_path,
-        columns_json_path=args.columns_json_path,
-        filter_null_threshold=args.filter_null_threshold
+        columns_json_path=args.columns_json_path
     ).load(app).transform()
 
     params = KmeansParams(

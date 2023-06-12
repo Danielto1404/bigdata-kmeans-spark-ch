@@ -8,12 +8,10 @@ class DataTransformer:
     def __init__(
             self,
             df_path: str,
-            columns_json_path: str,
-            filter_null_threshold: int = 0.5
+            columns_json_path: str
     ):
         self.data_path = df_path
         self.columns_json_path = columns_json_path
-        self.filter_null_threshold = filter_null_threshold
         self.df = None
 
     def load(self, spark) -> "DataTransformer":
@@ -30,29 +28,23 @@ class DataTransformer:
     def _read_columns(self) -> list:
         with open(self.columns_json_path, "r") as f:
             return json.load(f)
-
+        
     def _to_float(self) -> "DataTransformer":
-        float_cols = self._read_columns()
-        columns = [F.col(x).cast("float") for x in float_cols]
-        self.df = self.df.select(columns)
+        columns = self._read_columns()
+        columns = [F.col(c).cast("float").alias(c) for c in columns]
+        self.df = self.df.select(*columns)
         return self
 
     def _fill_nans(self) -> "DataTransformer":
-        expressions = [(F.count(F.when(F.isnull(c), c)) / F.count("*")).alias(c) for c in self.df.columns]
-        nulls_stats = self.df.select(expressions).collect()[0].asDict()
-
-        columns_to_save = [k for k, v in nulls_stats.items() if v < 1 - self.filter_null_threshold]
-        self.df = self.df.select(columns_to_save)
-        self.df.na.fill(0.0).na.fill("unknown")
-
+        self.df = self.df.na.fill(0.0)
         return self
 
     def _vectorize(self) -> "DataTransformer":
-        assembler = ml.VectorAssembler(inputCols=self.df.columns, outputCol="vector_features").setHandleInvalid("error")
+        assembler = ml.VectorAssembler(inputCols=self.df.columns, outputCol="vector_features")
         self.df = assembler.transform(self.df)
         return self
 
     def _standardize(self) -> "DataTransformer":
-        scaler = ml.StandardScaler(inputCol="vector_features", outputCol="features", withStd=True, withMean=True)
+        scaler = ml.MinMaxScaler(inputCol="vector_features", outputCol="features")
         self.df = scaler.fit(self.df).transform(self.df)
         return self
