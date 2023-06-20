@@ -20,7 +20,7 @@ services:
            - "8123:8123"
        volumes:
            - ./data/en.openfoodfacts.org.products.csv:/var/lib/clickhouse/user_files/en.openfoodfacts.org.products.csv
-           - ./scripts/init_clickhouse.sh:/docker-entrypoint-initdb.d/init_clickhouse.sh
+           - ./scripts/init_clickhouse.sh:/docker-entrypoint-initdb.d/init_db.sh
        healthcheck:
            test: [ "CMD", "wget", "--spider", "-q", "localhost:8123/ping" ]
            interval: 30s
