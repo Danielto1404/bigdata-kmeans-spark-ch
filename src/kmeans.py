@@ -1,4 +1,5 @@
 import dataclasses
+import os
 
 from pyspark.ml.clustering import KMeans
 from pyspark.sql import DataFrame
@@ -39,6 +40,8 @@ class PySparkKMeans:
         return self.model is not None
 
     def save(self, path: str):
+        dirs = os.path.dirname(path)
+        os.makedirs(dirs, exist_ok=True)
         self.model.save(path)
 
 

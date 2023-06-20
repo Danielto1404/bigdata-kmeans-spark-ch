@@ -10,6 +10,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--table_name", default="datasets.openfood")
     parser.add_argument("--columns_json_path", default="config/columns.json")
+    parser.add_argument("--save_path", default="models/kmeans")
     parser.add_argument("--k", default=2, type=int)
     parser.add_argument("--max_iter", default=8, type=int)
     parser.add_argument("--distance_measure", default="euclidean")
